@@ -77,6 +77,16 @@ app.post('/articles/add', (req, res) => {
 	});
 });
 
+// THESE ROUTES allow us to direct to a single article
+app.get('/article/:id', (req, res) => {
+	Article.findById(req.params.id, (err, article) => {
+		//render the article template
+		res.render('article', {
+			article
+		});
+	});
+})
+
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 })
