@@ -97,6 +97,27 @@ app.get('/article/edit/:id', (req, res) => {
 	});
 });
 
+// THIS ROUTE allows us to UPDATE a single article
+app.post('/articles/edit/:id', (req, res) => {
+	let article = {};
+
+	article.title = req.body.title;
+	article.author = req.body.author;
+	article.body = req.body.body;
+
+	let query = {_id: req.params.id}
+
+	Article.update(query, article, (err) => {
+		if(err) {
+			console.log(err);
+			return;
+		} else {
+			// if we're here, the article was created and added to db
+			res.redirect('/');
+		}
+	});
+});
+
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 })
