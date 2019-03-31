@@ -23,6 +23,10 @@ db.on('error', (err) => {
 // Bring in our Article Model
 let Article = require('./models/article');
 
+// bodyparser initialization
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
+
 // Load our view engine, PUG
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -44,12 +48,30 @@ app.get('/', (req, res) => {
 	});
 })
 
-// This route is used for ADDING AN ARTICLE
+// This ROUTE is used for ADDING AN ARTICLE
 app.get('/articles/add', (req, res) => {
 	res.render('add_article', {
 		title: 'Add new article'
 	})
 })
+
+// The ROUTE is used for SUBMIT POST
+app.post('/articles/add', (req, res) => {
+	let article = new Article()
+	article.title = req.body.title;
+	article.author = req.body.author;
+	article.body = req.body.body;
+
+	article.save((err) => {
+		if(err) {
+			console.log(err);
+			return;
+		} else {
+			// if we're here, the article was created and added to db
+			res.redirect('/');
+		}
+	});
+});
 
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
