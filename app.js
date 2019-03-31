@@ -23,9 +23,13 @@ db.on('error', (err) => {
 // Bring in our Article Model
 let Article = require('./models/article');
 
-// bodyparser initialization
+// BODYPARSER initialization
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
+
+// SET PUBLIC FOLDER
+app.use(express.static(path.join(__dirname, 'public')));
+
 
 // Load our view engine, PUG
 app.set('views', path.join(__dirname, 'views'));
