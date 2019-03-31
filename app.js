@@ -77,15 +77,25 @@ app.post('/articles/add', (req, res) => {
 	});
 });
 
-// THESE ROUTES allow us to direct to a single article
+// THIS ROUTES allow us to direct to a single article, by ID
 app.get('/article/:id', (req, res) => {
 	Article.findById(req.params.id, (err, article) => {
 		//render the article template
 		res.render('article', {
+			title: 'Edit Article',
 			article
 		});
 	});
 })
+
+// THIS ROUTE allows us to edit a single article, by ID
+app.get('/article/edit/:id', (req, res) => {
+	Article.findById(req.params.id, (err, article) => {
+		res.render('edit_article', {
+			article
+		});
+	});
+});
 
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
