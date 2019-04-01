@@ -10,9 +10,12 @@ const port = process.env.PORT || 3000;
 const expressValidator = require('express-validator');
 const flash = require('connect-flash');
 const session = require('express-session');
+const config = require('./routes/config/database');
+
+const passport = require('passport');
 
 // connect mongoose to our mongoDB database
-mongoose.connect('mongodb://localhost/nodekb');
+mongoose.connect(config.database);
 let db = mongoose.connection;
 
 db.once('open', () => {
@@ -50,6 +53,18 @@ app.use(function (req, res, next) {
 
 // EXPRESS VALIDATOR
 app.use(expressValidator());
+
+// PASSPORT
+require('./routes/config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+
+// enable GLOBAL USER var
+app.get('*', (req, res, next) => {
+	// if logged in, set the global user to the user returned by the req otherwise this is null
+	res.locals.user = req.user || null;
+	next();
+})
 
 // SET PUBLIC FOLDER
 app.use(express.static(path.join(__dirname, 'public')));
