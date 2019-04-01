@@ -7,6 +7,10 @@ const express = require('express'),
 
 const port = process.env.PORT || 3000;
 
+const expressValidator = require('express-validator');
+const flash = require('connect-flash');
+const session = require('express-session');
+
 // connect mongoose to our mongoDB database
 mongoose.connect('mongodb://localhost/nodekb');
 let db = mongoose.connection;
@@ -23,13 +27,28 @@ db.on('error', (err) => {
 // Bring in our Article Model
 let Article = require('./models/article');
 
-// BODYPARSER initialization
+// MIDDLEWARE SETUP
+
+// BODYPARSER
 app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
+// EXPRESS SESSION
+app.use(session({
+	secret: 'pineapples',
+	resave: true,
+	saveUninitialized: true,
+}));
+
+// EXPRESS MESSAGES
+app.use(require('connect-flash')());
+app.use(function (req, res, next) {
+	res.locals.messages = require('express-messages')(req, res);
+	next();
+});
+
 // SET PUBLIC FOLDER
 app.use(express.static(path.join(__dirname, 'public')));
-
 
 // Load our view engine, PUG
 app.set('views', path.join(__dirname, 'views'));
@@ -72,6 +91,8 @@ app.post('/articles/add', (req, res) => {
 			return;
 		} else {
 			// if we're here, the article was created and added to db
+			// flash, type of flash message, message of flash message
+			req.flash('success', 'Article Added')
 			res.redirect('/');
 		}
 	});
@@ -112,7 +133,8 @@ app.post('/articles/edit/:id', (req, res) => {
 			console.log(err);
 			return;
 		} else {
-			// if we're here, the article was created and added to db
+			// if we're here, the article was successfully updated
+			req.flash('success', 'Article Updated')
 			res.redirect('/');
 		}
 	});

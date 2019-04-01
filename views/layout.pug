@@ -16,6 +16,7 @@ html
 					li.nav-item
 						a.nav-link(href='/articles/add') Add Article
 		.container.mt-5
+			!= messages('message', locals)
 			block content
 			br
 			hr
