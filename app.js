@@ -47,6 +47,9 @@ app.use(function (req, res, next) {
 	next();
 });
 
+// EXPRESS VALIDATOR
+app.use(expressValidator());
+
 // SET PUBLIC FOLDER
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -79,23 +82,35 @@ app.get('/articles/add', (req, res) => {
 })
 
 // The ROUTE is used for SUBMIT POST
+// validation with express-validation
 app.post('/articles/add', (req, res) => {
-	let article = new Article()
-	article.title = req.body.title;
-	article.author = req.body.author;
-	article.body = req.body.body;
+	req.checkBody('title','Title is required').notEmpty();
+	req.checkBody('author','Author is required').notEmpty();
+	req.checkBody('body','Body is required').notEmpty();
 
-	article.save((err) => {
-		if(err) {
-			console.log(err);
-			return;
-		} else {
-			// if we're here, the article was created and added to db
-			// flash, type of flash message, message of flash message
-			req.flash('success', 'Article Added')
-			res.redirect('/');
-		}
-	});
+	// Get Errors
+	let errors = req.validationErrors();
+	if(errors){
+		res.render('add_article', {
+			title:'Add Article',
+			errors:errors
+		});
+	} else {
+		let article = new Article();
+		article.title = req.body.title;
+		article.author = req.body.author;
+		article.body = req.body.body;
+
+		article.save(function(err){
+			if(err){
+				console.log(err);
+				return;
+			} else {
+				req.flash('success','Article Added');
+				res.redirect('/');
+			}
+		});
+	}
 });
 
 // THIS ROUTES allow us to direct to a single article, by ID
