@@ -26,6 +26,7 @@ db.on('error', (err) => {
 
 // Bring in our Article Model
 let Article = require('./models/article');
+// let User = require('./models/user');
 
 // MIDDLEWARE SETUP
 
@@ -78,6 +79,10 @@ app.get('/', (req, res) => {
 // Implementing the router files
 let articles = require('./routes/articles');
 app.use('/articles', articles);
+
+let users = require('./routes/users');
+app.use('/users', users);
+
 
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
