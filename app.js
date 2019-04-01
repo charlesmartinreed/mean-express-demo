@@ -118,6 +118,17 @@ app.post('/articles/edit/:id', (req, res) => {
 	});
 });
 
+// THIS ROUTE allows us to DELETE a single article
+app.delete('/article/:id', (req, res) => {
+	let query = {_id: req.params.id}
+	Article.remove(query, (err) => {
+		if(err) {
+			console.log(err);
+		}
+		res.send('Success'); //by default, this sends HTTP 200
+	})
+})
+
 app.listen(port, () => {
 	console.log(`Server started on port ${port}`);
 })
