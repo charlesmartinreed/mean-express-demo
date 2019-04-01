@@ -6,7 +6,7 @@ $(document).ready(function(){
 		const id = $target.attr('data-id');
 		$.ajax({
 			type: 'DELETE',
-			url: `/article/${id}`
+			url: `/articles/${id}`
 			// callback style
 			// success: function(response){
 			// 	alert('Deleting Article!');
